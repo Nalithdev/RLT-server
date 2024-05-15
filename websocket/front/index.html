@@ -3,21 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
+<div>
     <p>last message</p>
     <p class="data"></p>
-    <textarea name="" id="" cols="30" rows="10"></textarea>
-    <button onclick="send()">Refresh</button>
+    <input type="text" name="" id="room">
+    <div>
+        <p>Créer votre joueur</p>
+    <input type="text" id="player">
+    <button onclick="joinGame()">Join Game</button>
+    </div>
+    <div>
+        <p>Coordonnées</p>
+        <input type="text" id="coord">
+        <button onclick="sendCoor()">Send Coor</button>
+    </div>
+<section class="game">
+    <div id="l0" class="line">
+        <div id="l0c0" class="colone"></div>
+        <div id="l0c1" class="colone"></div>
+        <div id="l0c2" class="colone"></div>
+    </div>
+    <div id="l1" class="line">
+        <div id="l1c0" class="colone"></div>
+        <div id="l1c1" class="colone"></div>
+        <div id="l1c2" class="colone"></div>
+    </div>
+    <div id="l2" class="line">
+        <div id="l2c0" class="colone"></div>
+        <div id="l2c1" class="colone"></div>
+        <div id="l2c2" class="colone" ></div>
+    </div>
+</section>
 
+</div>
+
+<div>
+
+</div>
 </body>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 <script>
+    localStorage.removeItem('player');
+    //hola
     let i = 0;
     let room = '';
     let socketid = '';
-    const text = document.querySelector('textarea');
+    const text = document.querySelector('#room');
     const socket = io('http://localhost:3000');
     socket.on('connect', () => {
         console.log('Connected');
@@ -34,8 +69,25 @@
         i++;
         console.log(text.value);
         //socket.emit('message', `Message ${i}`);
-        socket.emit('room', text.value, `Message room ${i}`);
+        socket.emit('room', text.value, `Message room ${text.value}`);
     }
+    let sendCoor =() => {
+        let coordonnees = document.querySelector('#coord').value;
+        let array= coordonnees.split('');
+        console.log(array);
+        x = parseInt(array[0]);
+        y = parseInt(array[1]);
+        console.log(x,y);
+        console.log(localStorage.getItem('player'));
+        socket.emit('coord', {"room":text.value, "coord":[x,y], "player":localStorage.getItem('player')});
+
+    };
+    let joinGame = () => {
+        console.log(document.querySelector('#player').value);
+        socket.emit('JoinGame', {"room":text.value, "player":document.querySelector('#player').value});
+        localStorage.setItem('player', document.querySelector('#player').value);
+    };
+
     text.addEventListener('change', (e) => {
         socket.emit('leave', room);
         socket.emit('join', e.target.value);
