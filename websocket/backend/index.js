@@ -16,6 +16,7 @@ app.get('/', (req, res) => {
     res.json('ip address: http://' + ip.address()+':'+PORT);
 });
 let games = {};
+var colors =["blue" , "black"]
 
 
 function checkVictoire(case_Input, room, PlayerName) {
@@ -153,11 +154,15 @@ io.on('connection', (socket) => {
                 
             } else {
                 games[data['room']].board[data['coord'][0]][data['coord'][1]] = data['player'];
+                console.log("color send" + colors[0] + colors[games[data['room']].turn], games[data['room']].turn)
+                io.to(data['room']).emit('ChangeColor', [data['coord'], colors[games[data['room']].turn]]);
+
                 io.to(data['room']).emit('message', "Case " + data['coord'] + " choisie par le joueur " + data['player']);
 
                 // console.log(games[data['room']].board);
                 if (games[data['room']].turn === 0) {
                     games[data['room']].turn = 1;
+                    
                 }
                 else {
                     games[data['room']].turn = 0;

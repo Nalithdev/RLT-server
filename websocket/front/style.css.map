@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-{"version":3,"sourceRoot":"","sources":[],"names":[],"mappings":"","file":"style.css"}
-=======
-{"version":3,"sourceRoot":"","sources":["style.scss"],"names":[],"mappings":"AAAA;EACE;EACA;EACA;;;AAGF;EACE;EACA;;;AAGF;EACE;;;AAEF;EACE;EACA;EACE","file":"style.css"}
->>>>>>> e22f28460b440d316015b8e0b173cbe02d537623
+{"version":3,"sources":["style.scss","style.css"],"names":[],"mappings":"AAAA;EACE,SAAA;EACA,UAAA;EACA,sBAAA;ACCF;;ADEA;EACE,iBAAA;EACA,kBAAA;ACCF;;ADEA;EACE,aAAA;ACCF;;ADCA;EACE,uBAAA;EACA,YAAA;EACE,aAAA;ACEJ","file":"style.css"}
