@@ -1,22 +1,23 @@
 import express from 'express';
 import http from 'http';
 import ip from 'ip';
-import { Server } from 'socket.io';
+import {Server} from 'socket.io';
 import cors from 'cors';
+
 const app = express();
 const server = http.createServer(app);
 const PORT = 3000;
 const io = new Server(server, {
     cors: {
         origin: '*',
-        }
+    }
 })
 app.use(cors())
 app.get('/', (req, res) => {
-    res.json('ip address: http://' + ip.address()+':'+PORT);
+    res.json('ip address: http://' + ip.address() + ':' + PORT);
 });
 let games = {};
-
+let restart = 0;
 
 class Morpion {
     constructor() {
@@ -29,6 +30,91 @@ class Morpion {
         this.turn = 0;
     }
 }
+
+function Play(room, coord, player) {
+    if (player === games[room].players[games[room].turn]) {
+        if (games[room].board[coord[0]][coord[1]] !== null) {
+            console.log('case not empty');
+            io.to(room).emit('message', 'case not empty');
+        } else {
+            games[room].board[coord[0]][coord[1]] = player;
+            console.log(games[room].board);
+            io.emit("play", {"coord": coord, "player": player});
+            io.to(room).emit('message', `player ${player} played at ${coord}`);
+            let result = check_if_winner(coord, room);
+            if (result === true) {
+                io.to(room).emit('winner', games[room].players[games[room].turn]);
+                return result;
+            }
+            else {
+                if (games[room].turn === 0) {
+                    games[room].turn = 1;
+                    io.to(room).emit('turn', "au tour de " + games[room].players[1]);
+                } else {
+                    games[room].turn = 0;
+                    io.to(room).emit('turn', "au tour de " + games[room].players[0]);
+                }
+            }
+
+        }
+    } else {
+        console.log('not your turn');
+        io.to(room).emit('message', 'not your turn');
+    }
+}
+
+function check_if_winner(coord, room) {
+    console.log('check if winner');
+    console.log(coord);
+    console.log(room);
+    let linecheck = check_line(coord, room);
+    let colcheck = check_col(coord, room);
+    let diagcheck = check_diag(room);
+    if (linecheck === true || colcheck === true || diagcheck === true ) {
+        return true;
+    }
+    return false;
+
+}
+
+function check_line(coord, room) {
+    console.log('check line');
+    console.log(games[room].board[0][coord[1]] === games[room].board[1][coord[1]]);
+    console.log(games[room].board[0][coord[1]] === games[room].board[2][coord[1]]);
+    if (games[room].board[0][coord[1]] === games[room].board[1][coord[1]] && games[room].board[0][coord[1]] === games[room].board[2][coord[1]]) {
+        console.log('win');
+        return true;
+    }
+    return false;
+}
+
+function check_col(coord, room) {
+    console.log('check col');
+    console.log(games[room].board[coord[0]][0] === games[room].board[coord[0]][1]);
+    console.log(games[room].board[coord[0]][0] === games[room].board[coord[0]][2]);
+    if (games[room].board[coord[0]][0] === games[room].board[coord[0]][1] && games[room].board[coord[0]][0] === games[room].board[coord[0]][2]) {
+        console.log('win');
+        return true;
+    }
+    return false;
+}
+
+function check_diag(room) {
+    console.log('check diag');
+    console.log(games[room].board[0][0] === games[room].board[1][1]);
+    console.log(games[room].board[0][0] === games[room].board[2][2]);
+    console.log(games[room].board[0][2] === games[room].board[1][1]);
+    console.log(games[room].board[0][2] === games[room].board[2][0]);
+    if (games[room].board[0][0] === games[room].board[1][1] && games[room].board[0][0] === games[room].board[2][2] &&
+        + games[room].board[0][0] != null||
+        + games[room].board[0][2] === games[room].board[1][1] && games[room].board[0][2] === games[room].board[2][0] &&
+        + games[room].board[0][2] != null ){
+        console.log('win');
+        return true;
+    }
+    return false;
+}
+
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.broadcast.emit('user connected');
@@ -42,21 +128,27 @@ io.on('connection', (socket) => {
     });
 
 
-
     socket.on('join', (room) => {
         console.log('join room: ' + room);
         socket.join(room);
         io.to(room).emit('join', room);
         if (games[room] === undefined) {
-            games[room] =  new Morpion(room);
+            games[room] = new Morpion(room);
             console.log('création de la room ' + room);
             console.log(games);
 
         }
+        if (games[room].players.length === 2) {
+            io.to(room).emit('full', 'room is full');
+            console.log('room is full');
+        }
+        else {
+            io.to(room).emit('new-game', `new game in ${room} room`);
+        }
+
         console.log(games)
         console.log(games[room]);
         console.log(games[room].board);
-        io.to(room).emit('message', `message from ${room} room`);
     });
     socket.on('leave', (room) => {
         console.log('leave room: ' + room);
@@ -64,15 +156,23 @@ io.on('connection', (socket) => {
         io.to(room).emit('leave', room);
     });
     socket.on('JoinGame', (data) => {
-        console.log('JoinGame');
-        console.log(data);
-        if (games[data['room']].players.length === 2) {
-            io.to(data['room']).emit('full', 'room is full');
-            console.log('room is full');
-            return;
+            console.log('JoinGame');
+            console.log(data);
+            if (games[data['room']].players.length === 2) {
+                io.to(data['room']).emit('full', 'room is full');
+                console.log('room is full');
+            }
+            else {
+            games[data['room']].players.push(data['player']);
+            io.to(data['room']).emit('message', `player ${data['player']} joined the game`);
+            io.to(data['room']).emit('turn', "au tour de " + games[data['room']].players[games[data['room']].turn]);
+            console.log(games[data['room']].players);
+            if (games[data['room']].players.length === 2) {
+                io.to(data['room']).emit('start', 'game started');
+
+            }
+
         }
-        games[data['room']].players.push(data['player']);
-        console.log(games[data['room']].players);
     }
     )
     socket.on('coord', (data) => {
@@ -80,28 +180,42 @@ io.on('connection', (socket) => {
         console.log(data);
         console.log(games[data['room']].board);
         console.log(data['coord'][0]);
-        console.log(games[data['room']].board[data['coord'][0][data['coord'][1]]]);
+        console.table(games[data['room']].board[[data['coord'][0]][data['coord'][1]]]);
         console.log(games[data['room']].players[games[data['room']].turn]);
         console.log(data['player']);
-        if (data['player'] === games[data['room']].players[games[data['room']].turn]) {
-            games[data['room']].board[data['coord'][0]][data['coord'][1]] = data['player'];
-            console.log(games[data['room']].board);
-            if (games[data['room']].turn === 0) {
-                games[data['room']].turn = 1;
-            }
-            else {
-                games[data['room']].turn = 0;
-            }
+        let result = Play(data['room'], data['coord'], data['player']);
+
+        console.log(result);
+        if (result === true) {
+            console.log('winner');
+            io.to(data['room']).emit('winner', games[data['room']].players[games[data['room']].turn]);
         }
-        else {
-            console.log('not your turn');
+
+
+
+    });
+    socket.on('restart', (room) => {
+        console.log('restart');
+        restart++;
+        if (restart === 2) {
+            io.to(room).emit('restart', 'restart');
+            restart = 0;
         }
-        io.to(data['room']).emit('coord', data);
+
+        games[room].board = [
+            [null, null, null],
+            [null, null, null],
+            [null, null, null]
+        ];
+        games[room].turn = 0;
+        io.to(room).emit('turn', "au tour de " + games[room].players[0]);
+
     });
 })
 
 
+
 server.listen(PORT, () => {
-    console.log('Server ip : http://' +ip.address() +":" + PORT);
+    console.log('Server ip : http://' + ip.address() + ":" + PORT);
 })
 
