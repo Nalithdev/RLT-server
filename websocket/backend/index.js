@@ -24,26 +24,36 @@ function checkVictoire(case_Input, room, PlayerName) {
     console.log("case_Input", case_Input, "room", room, "PlayerName", PlayerName, "Board", games[room].board);
 
     // Vérifier la ligne
-    if (games[room].board[case_Input[0]][0] === games[room].board[case_Input[0]][1] &&
+    if (games[room].board[case_Input[0]][0] !== null &&
+        games[room].board[case_Input[0]][0] === games[room].board[case_Input[0]][1] &&
         games[room].board[case_Input[0]][1] === games[room].board[case_Input[0]][2]) {
 
         io.to(room).emit('message', "Le joueur " + PlayerName + " a gagné");
         console.log('Victoire ', PlayerName);
     }
     // Vérifier la colonne
-    else if (games[room].board[0][case_Input[1]] === games[room].board[1][case_Input[1]] &&
+    else if (games[room].board[0][case_Input[1]] !== null &&
+        games[room].board[0][case_Input[1]] === games[room].board[1][case_Input[1]] &&
         games[room].board[1][case_Input[1]] === games[room].board[2][case_Input[1]]) {
 
         io.to(room).emit('message', "Le joueur " + PlayerName + " a gagné");
     }
     // Vérifier les diagonales
-    else if ((case_Input[0] === 0 && case_Input[1] === 0) || (case_Input[0] === 1 && case_Input[1] === 1) || (case_Input[0] === 2 && case_Input[1] === 2)) {
-        if (games[room].board[0][0] === games[room].board[1][1] && games[room].board[1][1] === games[room].board[2][2]) {
+    else if ((case_Input[0] === 0 && case_Input[1] === 0) ||
+        (case_Input[0] === 1 && case_Input[1] === 1) ||
+        (case_Input[0] === 2 && case_Input[1] === 2)) {
+        if (games[room].board[0][0] !== null &&
+            games[room].board[0][0] === games[room].board[1][1] &&
+            games[room].board[1][1] === games[room].board[2][2]) {
             io.to(room).emit('message', "Le joueur " + PlayerName + " a gagné");
         }
     }
-    else if ((case_Input[0] === 0 && case_Input[1] === 2) || (case_Input[0] === 1 && case_Input[1] === 1) || (case_Input[0] === 2 && case_Input[1] === 0)) {
-        if (games[room].board[0][2] === games[room].board[1][1] && games[room].board[1][1] === games[room].board[2][0]) {
+    else if ((case_Input[0] === 0 && case_Input[1] === 2) ||
+        (case_Input[0] === 1 && case_Input[1] === 1) ||
+        (case_Input[0] === 2 && case_Input[1] === 0)) {
+        if (games[room].board[0][2] !== null &&
+            games[room].board[0][2] === games[room].board[1][1] &&
+            games[room].board[1][1] === games[room].board[2][0]) {
             io.to(room).emit('message', "Le joueur " + PlayerName + " a gagné");
         }
     }
@@ -136,16 +146,35 @@ io.on('connection', (socket) => {
         // console.log(games[data['room']].players[games[data['room']].turn]);
         // console.log(data['player']);
         if (data['player'] === games[data['room']].players[games[data['room']].turn]) {
-            games[data['room']].board[data['coord'][0]][data['coord'][1]] = data['player'];
-            // console.log(games[data['room']].board);
-            if (games[data['room']].turn === 0) {
-                games[data['room']].turn = 1;
+            if (games[data['room']].board[data['coord'][0]][data['coord'][1]] !== null) {
+                
+                io.to(data['room']).emit('message', "case déjà prise Choisisez-en une autre !");
+
+                
+            } else {
+                games[data['room']].board[data['coord'][0]][data['coord'][1]] = data['player'];
+                io.to(data['room']).emit('message', "Case " + data['coord'] + " choisie par le joueur " + data['player']);
+
+                // console.log(games[data['room']].board);
+                if (games[data['room']].turn === 0) {
+                    games[data['room']].turn = 1;
+                }
+                else {
+                    games[data['room']].turn = 0;
+                }
+                console.log("DATA", data, "Games", games)
+                // Check si la case est deja prit
+    
+                // while (games[data['room']].board[data['coord'][0]][data['coord'][1]] !== null ) {
+                //     console.log("case déjà prise Choisisez-en une autre !", games[data['room']].board[data['coord'][0]][data['coord'][1]]);
+                //     io.to(data['room']).emit('message', "case déjà prise Choisisez-en une autre !");
+                //     return;
+                // } 
+                    
+                checkVictoire(data['coord'], data['room'] ,data['player']);
             }
-            else {
-                games[data['room']].turn = 0;
-            }
-            console.log("DATA", data ,"Games"  ,games)
-            checkVictoire(data['coord'], data['room'] ,data['player']);
+            
+
         }
         else {
 
