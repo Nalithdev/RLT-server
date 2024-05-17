@@ -64,6 +64,11 @@
     socket.on('disconnect', () => {
         console.log('Disconnected');
     });
+    socket.on('ChangeColor', (data) => {
+        console.log(data[0][0] , data[1] , data[0][1]); 
+        document.getElementById(`l${data[0][0]}c${data[0][1]}`).style.backgroundColor = data[1];
+        console.log("Les data" + data);
+    });
 
     let send = () => {
         i++;
@@ -95,4 +100,5 @@
     });
 
 </script>
+
 </html>
