@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a30a1f69-bda7-4203-80eb-37d6d7e360c2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/websocket/front/src/Cross.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket/backend/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/websocket/backend/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket/front/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/websocket/front/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket/front/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/websocket/front/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket/front/style.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/websocket/front/style.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/websocket/front/style.scss" beforeDir="false" afterPath="$PROJECT_DIR$/websocket/front/style.scss" afterDir="false" />
-    </list>
+    <list default="true" id="a30a1f69-bda7-4203-80eb-37d6d7e360c2" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -32,20 +25,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ethan/Documents/IIM_A3/RLT_Server&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/ethan/Documents/IIM_A3/RLT_Server/websocket/front/src",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ethan\Documents\IIM_A3\RLT_Server\websocket\front\src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\ethan\Documents\IIM_A3\RLT_Server\websocket\front\src" />
     </key>
@@ -66,7 +62,7 @@
       <option name="presentableId" value="Default" />
       <updated>1715758031407</updated>
       <workItem from="1715758032454" duration="14683000" />
-      <workItem from="1715932324372" duration="15775000" />
+      <workItem from="1715932324372" duration="16093000" />
     </task>
     <servers />
   </component>
