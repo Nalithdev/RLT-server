@@ -53,7 +53,7 @@
     let room = '';
     let socketid = '';
     const text = document.querySelector('#room');
-    const socket = io('http://localhost:3000');
+    const socket = io('https://rlt-server.onrender.com/');
     socket.on('connect', () => {
         console.log('Connected');
     });
@@ -65,7 +65,7 @@
         console.log('Disconnected');
     });
     socket.on('ChangeColor', (data) => {
-        console.log(data[0][0] , data[1] , data[0][1]); 
+        console.log(data[0][0] , data[1] , data[0][1]);
         document.getElementById(`l${data[0][0]}c${data[0][1]}`).style.backgroundColor = data[1];
         console.log("Les data" + data);
     });
